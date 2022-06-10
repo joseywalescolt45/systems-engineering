@@ -23,16 +23,18 @@ Name | Description
 
 This module will run continuously in backend, on a server.
 
-## Module Characteristics
+## Module Attributes
 
-Characteristic | Is | Explanation
+Attribute | Applies | Explanation
 --- | --- | ---
 Safety Critical | Yes | 1) Overscheduling pads or routes could theoretically produce an unsafe operating environment for aircraft.<br>2) Emergency operations take precedence.
-Realtime | No | This process creates and modifies flight plans. This happens generally in advance of the flight. The module does not govern flight paths, nor it does not communicate with any vehicle. A vehicle is not locked to a flight plan, ultimately pilot's discretion.
+Realtime | No | This process creates and modifies flight plans. This happens generally in advance of the flight on no strict time requirement.<br>The module does not govern flight paths, nor it does not communicate with any vehicle. A vehicle is not locked to a flight plan, pilot's responsibility.
 
 ## Global Variables
 
 **Statically Allocated Queues**
+
+TODO define arrays for the below
 
 Store in memory:
 - Queued low-priority flight plan requests
@@ -40,13 +42,11 @@ Store in memory:
 - Draft flight plans
 - Alternative flight plans (for flight plan modification requests)
 
-High priority requests are sent to their own queue and dealt with first, no need to search or sort out these requests.
-
-Storing requests allows batching for ride matching, etc.
-
-Draft flight plans are calculated and stored in local memory as the client decides which flight they'd like to take. Each has a unique `draft_plan_id` and an expiration time (defaulting to 10 minutes).
-
-Clients will confirm flight plans by ID rather than by submitting details. This is more secure; the scheduler will only confirm flight plans that it itself has calculated.
+Why:
+- High priority requests are sent to their own queue and dealt with first, no need to search or sort out these requests.
+- Storing requests allows batching for ride matching, etc.
+- Draft flight plans are calculated and stored in local memory as the client decides which flight they'd like to take. Each has a unique `draft_plan_id` and an expiration time (defaulting to 10 minutes).
+- Clients will confirm flight plans by ID rather than by resubmitting details. This is more secure; the scheduler will only confirm flight plans that it itself has calculated.
 
 TODO Evaluate if this is the correct route
 
@@ -59,6 +59,8 @@ The scheduler will expose a REST API for performing the following actions:
 - Confirming modifications to an existing flight plan
 
 A REST API allows client rideshare apps and automated Arrow protocols (such as maintenance scheduling) to make requests to the scheduler.
+
+TODO Need proper credentials to make modifications to existing flight plan, or for specific user. Prevent another individual from making a flight plan for you unless you authorized them to.
 
 **Requesting Flight Plans**
 
