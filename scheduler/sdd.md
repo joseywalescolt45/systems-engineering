@@ -65,7 +65,7 @@ TODO Need proper credentials to make modifications to existing flight plan, or f
 **Requesting Flight Plans**
 
 Request body format:
-```json
+```
 {
     "time": <DateTime>, // Desired departure date & time
     "origin_id": <U32>, // Desired pad of departure (by ID)
@@ -82,7 +82,7 @@ Request body format:
 This request, if successful, should add a flight request to the queue.
 
 An example successful reply:
-```json
+```
 {
     "result": "success",
     "drafts": [
@@ -106,7 +106,7 @@ An example successful reply:
 **Confirming a Flight Plan**
 
 The request:
-```json
+```
 {
     "draft_plan_id": <U32> // One of the draft plan IDs from a previous step
 }
@@ -115,7 +115,7 @@ The request:
 **Requesting Modifications to a Published Flight Plan**
 
 The request:
-```json
+```
 {
     "flight_plan_id": <U32>, // ID of an existing flight plan
 
@@ -128,7 +128,7 @@ This request should be *rejected* if:
 - The flight plan does not exist (for example, a draft flight plan ID is used).
 
 An example reply:
-```json
+```
 {
     "result": "success",
     "flight_plan_id": 0xABCDABCD,
@@ -153,7 +153,7 @@ An example reply:
 **Submitting Modifications to an Existing Flight Plan**
 
 The request:
-```json
+```
 {
     "flight_plan_id": <U32>, // ID of an existing flight plan
     "alternate_id": <U32>, // ID of altered plan
@@ -166,7 +166,7 @@ The module will batch requests every TODO seconds when calculating new flight pl
 
 These flight plans will be calculated together when determining the net lowest average wait time for passengers.
 
-TODO Elaborate
+TODO This is where the secret sauce occurs, lots of iteration on this algorithm
 
 ## Cleanup
 
