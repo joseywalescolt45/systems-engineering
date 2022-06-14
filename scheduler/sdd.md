@@ -14,7 +14,7 @@ Status | Draft
 
 ## Related Documents
 
-Name | Description
+Document | Description
 --- | ---
 [Concept of Operations (CONOPS)](https://docs.google.com/document/d/1AZyucyNBihml7bqxxxKISegdeacpRQwPmsbD6xJcLCQ/edit) | Overview of the scope and duties of this module.
 [Requirements & User Stories](https://docs.google.com/spreadsheets/d/1hLGIY6v_-GWK0jljLleN9nCiaRth0uKqRwssCJGIpuo/edit#gid=0) | Requirements and user stories for this module.
@@ -171,3 +171,9 @@ TODO This is where the secret sauce occurs, lots of iteration on this algorithm
 ## Cleanup
 
 Every TODO seconds the module will eliminate draft flight plans from the queue if the expiration date for each is less than the current DateTime.
+
+# Seamless Update
+
+TODO
+
+This is a live process. If a new version of this module is ready for deployment, how 
