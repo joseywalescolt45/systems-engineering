@@ -1,6 +1,6 @@
 ![Arrow Banner](https://github.com/Arrow-air/.github/raw/main/profile/assets/arrow_v2_twitter-banner_neu.png)
 
-# Simulation & Playback - Software Design Document (SDD)
+# Simulation - Software Design Document (SDD)
 
 FIXME Generate fake customers of various types who are interacting with the Arrow rideshare system. A fake fleet of aircraft in a fictional city, or use an existing city and existing aircraft.
 
@@ -45,6 +45,8 @@ Realtime | No | Simulation does not have realtime demands
 + Aircraft
 + Passengers
 
+## Configuration File
+
 **Attributes**
 
 + Vertiports
@@ -65,21 +67,38 @@ Realtime | No | Simulation does not have realtime demands
   + Weather conditions on route
   + Allowed to hover for how long
   + Unloading time
-+ Passenger
++ Passengers
   + Type: Commuter, weekender, etc.
   + Patience level
   + Weight
   + Weight of luggage
+  + Random cancellation
+  + Random destinations
+  + Randomly times out on route selection (passenger leaves app, gets distracted)
+
+The configuration file will declare the type of each of these attributes:
++ Arithmetic type (e.g. U32, float, etc.)
++ Arithmetic type limited to a set of values (e.g. [11, 20, 30, 44])
+
+The configuration file will declare rules for selecting a value for each of these attributes:
++ Random seed
++ Normal distribution curve (e.g. norm(0, 100))
++ etc.
 
 ## Logic 
 
 ### Initialization
 
-FIXME 
+Read the configuration file to instantiate arrays of pads, passengers, and aircraft.
 
 ### Control Loop
 
-FIXME
+Perform the following tasks:
++ Detect file changes to the configuration file.
++ Set variables to the values in the configuration file.
++ Update view to new variables.
++ Calculate new location of aircraft
++ Update view with location of aircraft, individuals
 
 ### Cleanup
 
@@ -91,7 +110,40 @@ For a refresher of the processes in the Arrow backend, please see the [top level
 
 ```mermaid
 graph LR
-  FIXME
+  subgraph Simulation Domain
+    subgraph Agents
+      cargo((Passenger))
+      air((Aircraft & Pilot))
+      eng((Engineer))
+    end
+
+    subgraph Assets
+      data(Local Data Storage)
+    end
+
+    logic((Simulation Logic))
+  end
+
+  subgraph Arrow Modules Under Test
+    sch(Scheduler)
+    stor(Storage)
+
+    stor -- Ask/Retrieve:<br/>Aircraft<br/>Pads<br/>etc. --- sch
+  end
+
+  config(Configuration File)
+
+  art((Artifacts Directory))
+
+  config -- Read into internal state --> logic
+  cargo -- Request/Cancel Flights --> sch
+  data -. Instead of link to<br/>cloud storage provider .- stor
+
+  logic -- Instantiate N --> cargo
+  logic -- Instantiate M --> air
+  logic -- Instantiate Y --> eng
+
+  logic -- Output --> art
 ```
 
 The instantiated processes will read and write to local storage rather than the storage solution the Arrow backend uses. This avoids contamination of real world records.
@@ -99,53 +151,3 @@ The instantiated processes will read and write to local storage rather than the 
 ### REST API
 
 FIXME
-
-# Simulation
-
-## Simulation Variables
-
-+ Vertiports
-  + Number of pads
-  + Restrictions: private residence/business, maintenance, etc.
-+ Pads
-  + Geographical coordinates (within 1 m) and altitudes
-  + Type of pad: Cargo, Passenger, Emergency Only, Backup Only, Maintenance Only
-  + Charging capability
-+ Aircraft
-  + Battery Capacity
-  + Battery Discharge Rate per Kg per second
-  + Passenger Capacity
-+ Flights
-  + FAA Air Corridors or VFR (visual flight rules)
-  + Weather conditions on route
-  + Wind speed and direction
-  + Length of inspection time
-  + Length of loading time
-  + Allowed to hover for how long
-  + Unloading time
-+ Passenger
-  + Type: Commuter, weekender, etc.
-  + Patience level
-  + Weight
-  + Weight of luggage
-
-## Playback
-
-### Requirements
-
-Desirement | Description
---- | ---
-Display Vertiports, Pads | "Nodes" are pads
-Dispay aircraft in transit, smoothly | No "jumping" along points between pads to display movement.
-Display the customers, indicate the number of waiting customers | Should be visually obvious when a vertiport is crowded
-Time rate adjustment | 1x, 5x, 100x speed
-
-### Frameworks
-
-Framework | Description
---- | ---
-[Veroviz](https://veroviz.org/)
-[NetworkX](https://networkx.org/)
-[PyVis](https://pyvis.readthedocs.io/en/latest/)
-[QGis Geospatial Simulation](https://plugins.qgis.org/plugins/geospatialsimulation/)
-QGIS Isochrones

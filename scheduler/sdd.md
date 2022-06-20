@@ -8,6 +8,17 @@ This document details the software implementation of the aircraft scheduler.
 
 This process is responsible for creating and modifying flight plans.
 
+There will be >= 1 `scheduler` instances running concurrently. Each instance will be limited to a "region". Regions are usually centered on a major city with some exceptions, such as popular remote tourist destinations.
+
+This allows several benefits:
++ Smaller number of pads for computation
+  + Won't include pads thousands of miles away in routing algorithm
++ Incremental rollout of new scheduler optimizations
+  + Beta testing in specific regions
++ Down time in one region won't affect other regions
+
+At some point in Arrow's growth, regional scheduler processes will need to coordinate with one another to facilitate cross-region transfers. This would be the case in adjacent cities whose Vertiport networks grow large enough to intersect. At this future point, Arrow will need a policy defining when aircraft are allowed to transfer regions. Potentially a load balancing feature.
+
 Attribute | Description
 --- | ---
 Status | Draft
@@ -39,13 +50,12 @@ TODO define arrays for the below
 Store in memory:
 - Queued low-priority flight plan requests
 - Queued high-priority flight plan requests
-- Draft flight plans
-- Alternative flight plans (for flight plan modification requests)
+- Main buffer for requests currently being calculated
 
 Why:
 - High priority requests are sent to their own queue and dealt with first, no need to search or sort out these requests.
 - Storing requests allows batching for ride matching, etc.
-- Draft flight plans are calculated and stored in local memory as the client decides which flight they'd like to take. Each has a unique `draft_plan_id` and an expiration time (defaulting to 10 minutes).
+- Flight requests are assigned a unique ID and an expiration timestamp.
 - Clients will confirm flight plans by ID rather than by resubmitting details. This is more secure; the scheduler will only confirm flight plans that it itself has calculated.
 
 TODO Evaluate if this is the correct route
@@ -57,18 +67,21 @@ TODO Evaluate if this is the correct route
 This module performs the following at initialization:
 + Clears request queues (HIGH and LOW priority queues)
 + Clears main buffer
++ Request aircraft and pad information from storage, based on region
 
 ### Control Loop
 
-This module will perform the following tasks at 0.2 Hz (every 5 seconds):
+This module will perform the following tasks at 0.2 Hz (every 5 seconds) (FIXME):
 + Read in N entries from the HIGH and LOW priority request buffers, add to main buffer with a timestamp
   + N depends on how quickly we're servicing others
 + Calculate flight plans that best accommodate the requests in the main buffer, given the state of flight plans that are already locked in
-+ Offer these to requesters (customers)
++ Offer/Update these to requesters (customers)
 
 Every five seconds, the next grouping's requests are added to the main buffer, and flights are recalculated.
 
-After 5 minutes without a resolution (selection by a customer), a request is dropped.
+The customer is not shown the exact aircraft, pilot, etc. This allows us to swap these attributes under the hood if better solutions become available. The change will only be noticeable to the customer if the new aircraft has a slightly different departure time.
+
+After M minutes without a resolution (selection by a customer), a request is dropped.
 
 ### Cleanup
 
@@ -87,7 +100,7 @@ subgraph Backend Domain
     end
     up[Upkeep]
     pay[Payment]
-    storage{Storage}
+    storage[Storage]
 
     rest -.- sch
 
@@ -112,13 +125,13 @@ subgraph Vehicle Domain
 end
 ```
 
+The `scheduler` does **not** communicate with the Vehicle domain.
+
 The `scheduler` exposes a REST API to accept requests from rideshare applications and travel booking websites (Expedia, Kayak, etc.).
 
 The `scheduler` writes flight plans to `storage`, and requests flight plans from `storage` in the event of a reboot.
 
 The `upkeep` process gets different permissions and capabilities and communicates with the `scheduler` directly over IPC. It can send aircraft to specific maintenance facilities with HIGH priority.
-
-It does **not** communicate with the Vehicle domain.
 
 ### REST API
 
@@ -130,7 +143,14 @@ The scheduler will expose a REST API for performing the following actions:
 
 A REST API allows client rideshare apps and automated Arrow protocols (such as maintenance scheduling) to make requests to the scheduler.
 
-TODO Need proper credentials to make modifications to existing flight plan, or for specific user. Prevent another individual from making a flight plan for you unless you authorized them to.
+**Header Format Example**
+```
+{
+    "Authorization": "Bearer RmT512bzRM430zqMLgV3Ia" // oAuth 2.0
+}
+```
+
+Need proper credentials to make modifications to existing flight plan, or for specific user. Prevent another individual from making a flight plan for you unless you authorized them to.
 
 **Requesting Flight Plans**
 
@@ -230,8 +250,10 @@ The request:
 }
 ```
 
-# Seamless Update
+## Tests
 
-TODO
+FIXME
 
-This is a live process. If a new version of this module is ready for deployment, how 
+### Unit Tests
+
+FIXME

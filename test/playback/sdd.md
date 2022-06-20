@@ -74,11 +74,3 @@ FIXME description of the graph.
 ### REST API
 
 FIXME
-
-## Tests
-
-FIXME
-
-### Unit Tests
-
-FIXME
