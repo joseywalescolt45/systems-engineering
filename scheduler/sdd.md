@@ -50,24 +50,29 @@ Why:
 
 TODO Evaluate if this is the correct route
 
-
 ## Logic 
 
 ### Initialization
 
-FIXME
+This module performs the following at initialization:
++ Clears request queues (HIGH and LOW priority queues)
++ Clears main buffer
 
 ### Control Loop
 
-The module will batch requests every TODO seconds when calculating new flight plans.
+This module will perform the following tasks at 0.2 Hz (every 5 seconds):
++ Read in N entries from the HIGH and LOW priority request buffers, add to main buffer with a timestamp
+  + N depends on how quickly we're servicing others
++ Calculate flight plans that best accommodate the requests in the main buffer, given the state of flight plans that are already locked in
++ Offer these to requesters (customers)
 
-These flight plans will be calculated together when determining the net lowest average wait time for passengers.
+Every five seconds, the next grouping's requests are added to the main buffer, and flights are recalculated.
 
-TODO This is where the sauce is made, lots of iteration on this algorithm
+After 5 minutes without a resolution (selection by a customer), a request is dropped.
 
 ### Cleanup
 
-Every TODO seconds the module will eliminate draft flight plans from the queue if the expiration date for each is less than the current DateTime.
+In the event of a shutdown, clear the request queues and issue an error message to any requester.
 
 ## Interfaces
 
@@ -88,7 +93,7 @@ subgraph Backend Domain
 
     up -- Schedule aircraft<br/>or components<br/>for maintenance --> sch
 
-    storage -- Get Flight Plans --> sch
+    %% storage -- Get Flight Plans --> sch %% Maybe not necessary
     sch -- Write Flight Plans --> storage
 
     sch -- Confirm Payment --> pay
