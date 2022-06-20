@@ -12,11 +12,4 @@ Module | Description
 [Guidance](./guidance) | Calculate suggested flight paths. Depends on FAA ruling of "Air Corridors" or VFR flight
 [Payment](./payment) | Fiat & crypto payments, Arrow token operations
 [Upkeep](./upkeep) | 1) Make requests to Scheduler for flights to maintenance facilities, in the case of aircraft or components due for replacement or servicing.<br>2) Authorize/deauthorize aircraft, components, pilots, passengers based on necessary certifications. Alert pertinent individuals if certification is expiring or has expired.
-
-
-## Agenda
-
-Discuss logical separation of protocols
-Roles and responsibilities of each protocol
-Prioritization of development
-
+[Travel Agent] | Get to your pad from your house, auto schedules rideshare vehicles to the pad. Rerouted flights will autoschedule a ground rideshare to take you the rest of the way to the original destination. Same for Cargo - schedule a last mile cargo van.

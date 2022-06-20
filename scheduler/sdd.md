@@ -50,6 +50,52 @@ Why:
 
 TODO Evaluate if this is the correct route
 
+## Interfaces
+
+For a refresher of the processes in the Arrow backend, please see the [top level README.md](../README.md).
+
+```mermaid
+graph LR
+subgraph Backend Domain
+    subgraph Scheduler Module
+        sch((Control Loop))
+        rest(REST API)
+    end
+    up[Upkeep]
+    pay[Payment]
+    storage[Storage]
+
+    rest -.- sch
+
+    up -- Schedule aircraft<br/>or components<br/>for maintenance --> sch
+
+    storage -- Get Flight Plans --> sch
+    sch -- Write Flight Plans --> storage
+
+    sch -- Confirm Payment --> pay
+    pay -- Provide Confirmation --> sch
+end
+
+subgraph Client Domain
+    ride(Rideshare Apps<br/>Expedia, etc.<br/>Flight Tracker)
+
+    ride -- Make Requests --> rest
+    rest -- Provide Info --> ride
+end
+
+subgraph Vehicle Domain
+    air((Aircraft))
+end
+```
+
+The `scheduler` exposes a REST API to accept requests from rideshare applications and travel booking websites (Expedia, Kayak, etc.).
+
+The `scheduler` writes flight plans to `storage`, and requests flight plans from `storage` in the event of a reboot.
+
+The `upkeep` process gets different permissions and capabilities and communicates with the `scheduler` directly over IPC. It can send aircraft to specific maintenance facilities with HIGH priority.
+
+It does **not** communicate with the Vehicle domain.
+
 ## REST API
 
 The scheduler will expose a REST API for performing the following actions:
