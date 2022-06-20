@@ -91,12 +91,11 @@ The configuration file will declare rules for selecting a value for each of thes
 
 Read the configuration file to instantiate arrays of pads, passengers, and aircraft.
 
+Set config variables to the values in the configuration file.
+
 ### Control Loop
 
 Perform the following tasks:
-+ Detect file changes to the configuration file.
-+ Set variables to the values in the configuration file.
-+ Update view to new variables.
 + Calculate new location of aircraft
 + Update view with location of aircraft, individuals
 
