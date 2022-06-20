@@ -30,7 +30,7 @@ Metadata | Description
 Objective | Demonstrate vehicle routing given a set of known vertiport pads and vehicles.<br/>The `scheduler` will interact with the record store via the `storage` service.<br/>The `storage` service abstracts access to a cloud storage provider or local storage (in the case of simulations).
 Introduces | Services:<br/>`scheduler`<br/>`storage`<br/><br/>Utilities:<br/>`simulation`<br/>`playback`
 Expands |
-Gantt | [Phase One Gantt - Google Drive](https://docs.google.com/spreadsheets/d/1n2YXbq1wimU18PORQtSU--8hPNuETFIXwcqq1udSDQI/edit?usp=sharing)
+Gantt | [Phase One Gantt - Google Drive (In Progress)](https://docs.google.com/spreadsheets/d/1n2YXbq1wimU18PORQtSU--8hPNuETFIXwcqq1udSDQI/edit?usp=sharing)
 
 ### Phase Two
 
