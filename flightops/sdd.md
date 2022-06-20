@@ -38,8 +38,41 @@ Realtime | Yes | Similar rationale to "Safety Critical".
 
 FIXME
 
-## REST API
+## Interfaces
+
+For a refresher of the processes in the Arrow backend, please see the [top level README.md](../README.md).
+
+```mermaid
+graph LR
+    subgraph Vehicle Domain
+        air((Aircraft))
+    end
+
+    subgraph Client Domain
+        app(App X)
+    end
+
+    subgraph Server Domain
+        module[Module A]
+    end
+```
+
+FIXME description of the graph.
+
+### REST API
 
 FIXME
 
-## Private Functions
+## Logic 
+
+### Initialization
+
+FIXME 
+
+### Control Loop
+
+FIXME
+
+### Cleanup
+
+FIXME

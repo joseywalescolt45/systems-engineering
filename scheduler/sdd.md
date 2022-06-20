@@ -50,6 +50,25 @@ Why:
 
 TODO Evaluate if this is the correct route
 
+
+## Logic 
+
+### Initialization
+
+FIXME
+
+### Control Loop
+
+The module will batch requests every TODO seconds when calculating new flight plans.
+
+These flight plans will be calculated together when determining the net lowest average wait time for passengers.
+
+TODO This is where the sauce is made, lots of iteration on this algorithm
+
+### Cleanup
+
+Every TODO seconds the module will eliminate draft flight plans from the queue if the expiration date for each is less than the current DateTime.
+
 ## Interfaces
 
 For a refresher of the processes in the Arrow backend, please see the [top level README.md](../README.md).
@@ -63,7 +82,7 @@ subgraph Backend Domain
     end
     up[Upkeep]
     pay[Payment]
-    storage[Storage]
+    storage{Storage}
 
     rest -.- sch
 
@@ -96,7 +115,7 @@ The `upkeep` process gets different permissions and capabilities and communicate
 
 It does **not** communicate with the Vehicle domain.
 
-## REST API
+### REST API
 
 The scheduler will expose a REST API for performing the following actions:
 - Requesting potential flight plans given `(time, origin, destination)`
@@ -205,18 +224,6 @@ The request:
     "alternate_id": <U32>, // ID of altered plan
 }
 ```
-
-## Ride Matching
-
-The module will batch requests every TODO seconds when calculating new flight plans.
-
-These flight plans will be calculated together when determining the net lowest average wait time for passengers.
-
-TODO This is where the secret sauce occurs, lots of iteration on this algorithm
-
-## Cleanup
-
-Every TODO seconds the module will eliminate draft flight plans from the queue if the expiration date for each is less than the current DateTime.
 
 # Seamless Update
 

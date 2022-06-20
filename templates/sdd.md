@@ -36,6 +36,20 @@ Realtime | ? |
 
 FIXME
 
+## Logic 
+
+### Initialization
+
+FIXME 
+
+### Control Loop
+
+FIXME
+
+### Cleanup
+
+FIXME
+
 ## Interfaces
 
 For a refresher of the processes in the Arrow backend, please see the [top level README.md](../README.md).
@@ -60,5 +74,3 @@ FIXME description of the graph.
 ### REST API
 
 FIXME
-
-## Private Functions
