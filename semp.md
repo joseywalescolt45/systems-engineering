@@ -28,8 +28,7 @@ documentation
 
 ### :muscle: Contributing
 
-The process of contributing to a GitHub repository is well documented online, and can be distilled down to these steps:
-
+The process of contributing to a GitHub repository is well documented online.
 1. Make a copy of the repository on the local machine
 2. Initialize a "branch" using git
     - A branch is a set of changes with a label, e.g. `readme-updates`
@@ -44,24 +43,24 @@ At this stage, GitHub now has at least three branches, or sets of code:
 - `develop`: Code that will eventually become the next release
 - The contributor's branch (e.g. `readme-updates`)
 
-A contributor needs to merge their code into the `develop` branch.
-
-To merge the new changes into `develop`, the contributor creates a "Pull
-Request" (PR). A PR is an official request to merge code into the `develop`
-branch. Other collaborators must review the code, make comments, and give their
+Can I merge my branch straight to `main` or `develop`?
+- The `main` and `develop` branches only allow merges from Pull Requests.
+  - A PR is an official request to merge code into a branch.
+- To merge the new changes into `develop`, the contributor creates a new PR for
+  their branch.
+- Other collaborators must review the code, make comments, and give their
 approvals prior to merging the branch.
-
-The `main` branch and `develop` branch will deny attempts to update their code outside of a
-Pull Request. Pull Requests require a specific number of reviewers.
 
 The official [Arrow Developer Guide](https://www.arrowair.com/docs/contributing/devguide) describes this process in specifics.
 
 ### :bookmark: Creating a Release
 Creating a new release is a trivial action in the GitHub interface and is already [well documented](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 
-After end-of-release reviews are completed and the `develop` branch is merged into `main`, the Core Team will create a new release from the `main` branch.
+When?
+- After end-of-release reviews are completed and the `develop` branch is merged into `main`, the Core Team will create a new release from the `main` branch.
 
-These releases are publically accessible. A release consists of:
+What's in a Release?
+- See [Rust's releases page](https://github.com/rust-lang/rust/releases) for examples
 - A compressed file containing a snapshot all source code
 - The unique identifier of the final commit in the release
 - A description of major and minor changes since the last release
@@ -70,28 +69,24 @@ These releases are publically accessible. A release consists of:
 	- Exported spreadsheets or PDFs from Google Drive whose versions are compatible with this release of the source code.
 	- e.g. Requirements Matrix v.1.0.1 (spreadsheet) is implemented by this release of source code
 
-See [this example](https://github.com/rust-lang/rust/releases) of published releases.
-
 ## :seedling: Document Life Cycle
 
-A lifetime document flow should account for the following:
-- Concept Phase
-- Collaboration
-- Edit Permissions
-- Release Cycle
-	- Draft
-	- Review
-	- Creating a version/release
-	
 ### :bulb: Concept Phase
 
-The conceptual phase starts with a template, outline, or blank document created in [Google Drive](https://www.google.com/drive/). This browser-based software enables concurrent edits to a document by numerous editors.
+Every document has a concept phase.
 
-Prior to a "first" release, there is considerable churn in document contents; adding and removing paragraphs, tweaking sentences, editing for tone. These changes don't need to be tracked until after the first release.
+The conceptual phase starts with a template, outline, or blank document created
+in [Google Drive](https://www.google.com/drive/).
+- This browser-based software enables concurrent edits to a document by numerous editors.
+- Allows comments with the
+  [Comment](https://support.google.com/docs/answer/65129?hl=en&co=GENIE.Platform%3DDesktop)
+  feature, which does not edit the document itself.
 
-Google Drive allows collaborators to non-invasively post comments and suggestions to a document with the [Comment](https://support.google.com/docs/answer/65129?hl=en&co=GENIE.Platform%3DDesktop) feature.
+Prior to a "first" release, there is considerable churn in document contents
+that do not need to be tracked. This includes adding and removing paragraphs,
+tweaking sentences, and editing for tone.
 
-When the language of the document (version one) is nearly finalized, the primary
+When the first version of the document is close to finalized, the primary
 author will decide the final format and home of the document.
 - Markdown format, tracked by a [version control system](https://en.wikipedia.org/wiki/Version_control)
 - Google Doc/Spreadsheet in Google Drive
@@ -100,44 +95,80 @@ author will decide the final format and home of the document.
 
 #### Overview
 
-In this approach, a document is written in [Markdown](https://www.markdownguide.org/getting-started/) and is stored in a remote (cloud) repository.
+```mermaid
+flowchart TD;
+  concept[Concept in Google Drive]
 
-Changes to the document are tracked by [git](https://git-scm.com/), a **version control system** (VCS) software. A VCS software enables collaborators to modify code, view the change history, undo changes, and merge different branches of development into a single change set. Each change (or "commit") is identified by a unique integer value.
+  concept --> con[Convert to .md File]
+  con --> push[Push to GitHub]
+  push --> r
+  start[Start Release Development\nMerge changes to `develop` branch]
+  subgraph r["GitHub Release Cycle"]
+    start --> pr
+    pr[Open Pull Request\nfor `develop` into `main`] --> review[Await Approvals]
+    review -- Unresolved Comments --> edit[Edit .md file\nPush changes]
+    edit --> review
+    review --All Comments Resolved\nApprovals Obtained-->close[Merge `develop` into `main`\nClose Pull Request]
 
-The repository is hosted by [GitHub](https://github.com/), a service which enables developers to:
-- Manage access to source code
-- Hold public code reviews
-- Deploy release (versioned) packages of code
+    close --> create[Create a Release Package]
+  end
+```
+
+In this approach, a document is written in
+[Markdown](https://www.markdownguide.org/getting-started/) and is stored in a
+remote (cloud) repository.
 
 Advantages of writing in Markdown:
 - Plaintext file is easy to review
 - Renders to a uniform, readable format
 - Renders UML diagrams, code snippets
 
+Changes to the document are tracked by [git](https://git-scm.com/), a **version
+control system** (VCS) software. Files are hosted by [GitHub](https://github.com).
+
+What does Git do?
+- View a file's history of "commits", or changes
+    - [Example of Commit History](https://github.com/Arrow-air/website/commits/staging)
+- Merge multiple user's branches (history of changes) together
+- Undo commits
+- Assign unique integer identifiers to a commit
+
+What is GitHub?
+- Online service for hosting git repositories
+- Manage access to source code
+- Hold public code reviews
+- Deploy release (versioned) packages of code
+
 #### Which Documents?
 
-Typically any internal document that is tightly coupled with product development already being tracked by a git repository.
+If a change to a document results in a change in code, that document should be
+tracked in the same git repository.
 
 In our case, these include:
 - Software Design Documents (SDD)
+    - Describes how the code works
 - Interface Control Documents (ICD)
-- Human System Interface Documents (HSID)
+    - Describes inputs and outputs of code
 
 #### Collaboration
 
-Collaboration on the document prior to release one has been covered by the prior Concept Phase section.
+Prior to Release/Version One: [Concept Phase](#-concept-phase)
 
 Collaboration on a version controlled document is the same as collaboration on source code, which is outlined [here](./#code-collaboration).
 
 #### Edit Permissions
 
-Anyone can make a Pull Request (see [Collaboration](#collaboration)). The code remains in an isolated branch and will not be merged into the `develop` branch without approvals from the Core Team.
+Anyone can make a Pull Request (see [Collaboration](#collaboration)).
+
+The code remains in an isolated branch and will not be merged into the `develop` branch without approvals from the Core Team.
 
 #### Release Cycle
 
 ##### Version Draft
 
-Changes to the document (or "commits", as they are called in the git workflow) are pushed to the `develop` branch. The `develop` branch is the bleeding edge of development - code and documentation that will eventually be codified as a new release.
+All branches seek to merge with the `develop` branch.
+
+The `develop` branch is current development, or the 'Draft' set of changes.
 
 ##### Version Review
 
@@ -161,16 +192,31 @@ Creating a release in GitHub is discussed in [Code Collaboration](#code-collabor
 
 #### Overview
 
+```mermaid
+flowchart TD;
+  concept[Concept in Google Drive]
+
+  concept --> r
+  subgraph r["Google Drive Release Cycle"]
+    start[End of Release] --> lock[Lock the Document]
+    lock --> appr[Activate 'Approvals' Feature]
+    appr --> await[Await Review Comments\nPublic Time Window]
+    await --Comments?--> address[Make Edits] --> await
+    await --Obtained Approvals--> version[Name a New Version]
+  end
+```
+
 In this approach, a document is stored and version-controlled in Google Drive.
 
 Advantages of writing documents in the Google ecosystem:
 - Increased control over document formatting
 	- margins, colors, fonts, text sizes, alignment, and so on
-- "Version" feature to create timestamped snapshots of the document
+- "Version" feature
+  - Create timestamped snapshots of the document
 - "Comment" feature
 	- Adds reviewer comments without editing the document itself
 - "Approvals" feature for reviews
-- Exportable to varying formats
+- Exportable to numerous formats
 
 #### Which Documents?
 
@@ -178,7 +224,7 @@ Documents hosted in the Google Drive include:
 - Those relying extensively on visual media (graphics, charts, video embeds)
 - Spreadsheets
 - Documents targeted toward partners, investors, and the general public
-    - These documents require greater control over presentation than Markdown allows
+    - These documents sometimes require greater control over presentation than Markdown allows
 
 Specific documents that these include:
 - User Story Matrices
@@ -204,7 +250,7 @@ Edits may be made to the Google Drive document until the end of a release.
 
 ##### Version Review
 
-Review should occur at the end of a release if changes to that document have been made since the prior release.
+:exclamation: *A review should occur if changes to a document have been made since the prior release.*
 
 Review of a Google Drive document is possible through the [Approvals](https://support.google.com/drive/answer/9387535) feature.
 
@@ -227,66 +273,144 @@ Version naming should follow [semver guidelines](https://semver.org/).
 :exclamation: Version for documents outside of a GitHub repository may not match the version of the GitHub release.
 
 
-## :bookmark_tabs: Document Types
+## :bookmark_tabs: Documents
 
-For each:
-- Brief Description
-- Where is this document located and why
-- Template
+### :globe_with_meridians: Locations
 
-Each of these document types will be located either in the Google Drive or a
-GitHub repository. For more information, see [Document Life Cycle](#-document-life-cycle).
+Here we define the complete list of product documents produced by Arrow.
 
-### :thought_balloon: Concept of Operations
+| Document | Where? | Why? |
+| ---- | ---- | ---- |
+| :thought_balloon: Concept of Operations (CONOPS) | Drive | Commonly viewed by stakeholders.<br />Contains graphs, images.
+| :running: User Stories | Drive | Spreadsheet
+| :microscope: Requirements | Drive | Spreadsheet
+| :triangular_ruler: Software Design Document (SDD) | GitHub | Tightly linked to code.<br />Markdown supports sequence diagrams.
+| :mailbox_with_mail: Interface Control Document (ICD) | GitHub | Tightly linked to code.
+| :heavy_check_mark: Verification & Validation (V&V) Document | GitHub | Code Snippets
+| :diamond_shape_with_a_dot_inside: Configuration Management (CM) Guide | GitHub | Code Snippets
+| :video_game: Human Systems Integration (HSI) Document | Google Drive | Lots of Pictures
 
-### :running: User Stories and Requirements Matrices
+### :black_nib: Descriptions
 
-These documents are separate spreadsheets:
-- Requirements
-- User Stories
+#### :thought_balloon: Concept of Operations (CONOPS)
 
-#### Requirements
+A high-level overview of a module or product.
 
-A Requirements Matrix has the following columns:
+Defines the scope of development, support, and testing.
 
-UID | Label | Primary Text | Rationale | Parent | Children
---- | --- | --- | --- | --- | ---
-0x0234abcd | REQ-0005 | The module shall... | Why? | REQ-0001 | REQ-0006<br/>REQ-0020
+Relevant:
+- [Arrow CONOPS Template](https://docs.google.com/document/d/1AhwyUmMH1rbmqMcTd1EyFIDcn-ItmaPxc7lKdZSf-q8/edit?usp=sharing)
+- [NASA CONOPS Template](https://www.nasa.gov/seh/appendix-s-concept-of-operations/)
 
-We follow NASA's guidelines on requirement definition:
-[NASA How to Write a Good
-Requirement](https://www.nasa.gov/seh/appendix-c-how-to-write-a-good-requirement/).
+#### :running: User Stories
 
-#### User Stories
+User stories are statements of action, intent, or desire from a user of the product.
 
-A User Story Matrix has the following columns:
+User stories have the following attributes:
+- **UID**
+  - A unique integer identifier
+  - e.g. 0x123412ac
+- **Label**
+  - An easier name for this user story
+  - e.g. US-PILOT-0001
+- **Primary Text**
+  - "As a passenger, I want..."
+- **Rationale**:
+  - Why this is worded the way it is, why it exists
+
 
 UID | Label | Primary Text | Rationale
---- | --- | --- | ---
-0x0234abcd | US-CARGO-0001 | As a passenger, I want... | etc.
+--- | --- | --- | --- |
+0x0234abcd | US-CARGO-0001 | As a passenger, I want to... | etc.
 
-### :triangular_ruler: Software Design Document (SDD)
+#### :microscope: Requirements
 
-Software implementation
+Requirements are "shall" or "must" statements specific to implementation.
 
-[SDD Template](./templates/sdd.md)
+Requirements have the following attributes:
+- **UID**
+  - A unique integer identifier
+  - e.g. 0x0ABCD123
+  - Never changes, allows Label to be changed
+- **Label**
+  - Easier name for this requirement
+  - e.g. "REQ-SCHED-0001"
+- **Primary Text**
+  - *"The module shall..."*
+- **Rationale**
+  - Why this requirement is needed
+- **Notes**
+  - Additional notes by developers or testers
+- **Parent**
+  - All requirements (except at the top level) must have a parent requirement
+  - e.g. "REQ-0001"
+- **Children**
+  - Any requirements that extend from this requirement
+- **Linked User Story**
+  - What user stories is this requirement addressing?
 
-### :heavy_check_mark: Verification & Validation (V&V) Document
+*Example*:
 
-[V&V Template](./templates/vnv.md)
+UID | Label | Primary Text | Rationale | Parent | Children | User Stories
+--- | --- | --- | --- | --- | --- | --- 
+0x0234abcd | REQ-0005 | The module shall... | Because... | REQ-0001 | REQ-0006<br/>REQ-0020 | US-CARGO-0001
 
-https://en.wikipedia.org/wiki/Software_verification_and_validation
+Relevant:
+- [NASA How to Write a Good
+Requirement](https://www.nasa.gov/seh/appendix-c-how-to-write-a-good-requirement/)
 
-### :mailbox_with_mail: Interface Control Document (ICD)
+#### :triangular_ruler: Software Design Document (SDD)
 
-Documents inputs and outputs of a system
-diagrams
-tables
-drawings
+Document containing:
+- State Machine Sequence Diagrams
+- Explanation of libraries
+- Explanation of global variables
+- Explanation of memory allocations
 
-[ICD Template](./templates/icd.md)
+Relevant:
+- [Arrow Markdown SDD Template](./templates/sdd.md)
 
-### Coming Soon
+#### :heavy_check_mark: Verification & Validation (V&V) Document
 
-- :diamond_shape_with_a_dot_inside: Configuration Management (CM) Document
-- :video_game: Human Systems Interface (HSI) Dcoument
+Document detailing:
+- Scope of Testing
+- Testing Procedure(s)
+- How Tests are Kept Up-To-Date
+- Frameworks Used
+
+Relevant Documentation:
+- [Arrow Markdown V&V Template](./templates/vnv.md)
+- [V&V Wiki](https://en.wikipedia.org/wiki/Software_verification_and_validation)
+
+#### :mailbox_with_mail: Interface Control Document (ICD)
+
+This document details:
+- Inputs and Outputs of a Module
+- Packet Formats
+- Frameworks and Libraries
+
+Relevant:
+- [Arrow Markdown ICD Template](./templates/icd.md)
+
+#### :diamond_shape_with_a_dot_inside: Configuration Management (CM) Document
+
+Procedures in response to external factors, such as:
+- Increases in server costs
+- Sudden loss of service
+- Change in available resources
+- Customer changes (new, lost)
+
+Relevant:
+- [NASA CM Plan Outline](https://www.nasa.gov/seh/appendix-r-plan-content)
+
+#### :video_game: Human Systems Integration (HSI) Document
+
+Document concerning the human element:
+- Operators
+  - Who They Are
+  - Roles & Responsibilities
+- How to Operate, Maintain, and Support the System
+- Safety Considerations
+
+Relevant:
+- [NASA HSI Outline](https://www.nasa.gov/seh/appendix-r-plan-content)
